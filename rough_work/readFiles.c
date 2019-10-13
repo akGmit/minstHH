@@ -10,8 +10,8 @@ int main()
   long lSize;
   uint8_t *buffer;
   
-  pFile = fopen("t10k-images.idx3-ubyte", "rb");
-  //pFile = fopen("t10k-labels.idx1-ubyte", "rb");
+  //pFile = fopen("t10k-images.idx3-ubyte", "rb");
+  pFile = fopen("t10k-labels.idx1-ubyte", "rb");
   // Get file size
   fseek(pFile, 0, SEEK_END);
   lSize = ftell(pFile);
