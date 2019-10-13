@@ -49,11 +49,12 @@ int main()
       for(int j = 0; j < 28; j++){
         for(int k = 0; k < 28; k++){
           img_arr[i][j][k] = buffer[pos];
-          printf("%s ", img_arr[i][j][k] > 128 ? "0" : "~");
+          printf("%s", img_arr[i][j][k] > 128 ? "0" : "~");
           pos++;
         }
         printf("\n");
       }
+      printf("=================================\n");  
     }
   }
 
