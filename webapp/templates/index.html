@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Paint</title>
+    <title>Handwritten digit recognition</title>
     <style>
         #container {
             position: relative;
@@ -21,16 +21,17 @@
 
 <body>
     
-    <div id="container">
-        <canvas id="digit" width="100" height="100">
-        </canvas>
-       
-    </div>
-    <div id="container">
+    <div id="container">{% block content %}
+        <canvas id="digit" width="100" height="100"></canvas>
         <canvas id="resized" width="28" height="28"></canvas>
-        <img id="dig"></div>
+        <button onclick="test()">Test</button>
+        {% endblock %}
     </div>
-    <button onclick="test()">Test</button>
-    <script src="canvas.js"></script>
+    <div>
+        {% block image %}
+        <img id="dig"></img>
+        {% endblock %}
+    </div>
+    <script src="../static/canvas.js"></script>
 </body>
 </html>

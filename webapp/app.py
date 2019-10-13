@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
-@app.route('/')
-def index_page():
-    return 'index.html'
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
