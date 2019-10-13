@@ -1,0 +1,3 @@
+#ignore mnist files
+rough_work/*ubyte
+rough_work/readFiles

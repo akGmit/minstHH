@@ -1,2 +1,1 @@
-# minstHH
-# minstHH
+# digit recognition using mnist database and keras 

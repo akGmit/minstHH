@@ -1,48 +1,35 @@
-/* fread example: read an entire file */
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
-int main () {
-  FILE * pFile;
+/* C program to read MNIST byte files */
+
+int main()
+{
+  FILE *pFile;
   long lSize;
-  char * buffer;
+  uint8_t *buffer;
   
-  size_t result;
+  pFile = fopen("t10k-images.idx3-ubyte", "rb");
+  // Get file size
+  fseek(pFile, 0, SEEK_END);
+  lSize = ftell(pFile);
+  rewind(pFile);
 
-  pFile = fopen ( "train-images.idx3-ubyte" , "rb" );
-  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+  buffer = (uint8_t *)malloc(sizeof(uint8_t) * lSize);
 
-  // obtain file size:
-  fseek (pFile , 0 , SEEK_END);
-  lSize = ftell (pFile);
-  rewind (pFile);
+  fread(buffer, 1, lSize, pFile);
+  
+  printf("Header\n");
+  
+  // convert first 8 bytes to magic number and items count
+  // big endian
+  uint32_t magicNumber = (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3];
+  uint32_t numberOfItems = (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7];
+  
+  printf("%d  %d", magicNumber, numberOfItems);
 
-  // allocate memory to contain the whole file:
-  buffer = (char*) malloc (sizeof(char)*lSize);
-  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
-
-  // copy the file into the buffer:
-  result = fread (buffer,1,lSize,pFile);
-  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
-  
-  /* the whole file is now loaded in the memory buffer. */
-  char  * processedBuffer;
-  processedBuffer = (char*)malloc(sizeof(char)*lSize/4);
-  
-  
-  printf("Buffer %d", buffer[20]);
-  
-//   for(int i = 16; i < lSize - 1; i++){
-//       unsigned int x = bufferp[]
-//       //*(processedBuffer + i) = buffer[pos] + buffer[pos+1] + buffer[pos +2]  + buffer[pos + 3];
-//       //printf("%d", x);
-//       pos = pos + 4;
-//   }
-  printf("\n%ld", lSize);
-  printf("\n%ld", result);
-  
-  // terminate
-  fclose (pFile);
-  free (buffer);
+  fclose(pFile);
+  free(buffer);
   return 0;
 }

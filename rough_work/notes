@@ -2,3 +2,5 @@ http://www.cplusplus.com/reference/cstdio/fread/
 Call c function from python
 https://docs.python.org/3/library/ctypes.html
 https://www.csestack.org/calling-c-functions-from-python/
+C-types
+https://docs.python.org/3/library/ctypes.html
