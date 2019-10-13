@@ -1,3 +1,4 @@
 #ignore mnist files
 rough_work/*ubyte
 rough_work/readFiles
+rough_work/.vscode

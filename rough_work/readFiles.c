@@ -28,9 +28,11 @@ int main()
   uint32_t magicNumber = (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3];
   uint32_t num_images  = (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7];
   
+  // declare arrays for images and labels
   uint8_t img_arr[num_images][28][28];
   uint8_t img_labels[num_images];
   
+  // if label
   if(magicNumber == 2049){
     int pos = 8;
     for(int i = 0; i < num_images; i++){
@@ -39,7 +41,7 @@ int main()
         pos++;
     }
   }
-  
+  //if image 
   if(magicNumber == 2051){
     int pos = 16;
     for(int i = 0;i < num_images; i++){
@@ -53,8 +55,6 @@ int main()
       }
     }
   }
-
-
 
   fclose(pFile);
   free(buffer);
