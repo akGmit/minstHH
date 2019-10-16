@@ -46,15 +46,13 @@ uint8_t * label_data(FILE *f){
 uint8_t* process_bytes(uint8_t bytes[], int magic_number, long item_count ){
     int i,j , k = 0;
     int pos = 16;
-    uint8_t (*matrix)[28][28] = malloc(sizeof(uint8_t[28][28]) * item_count);
+    uint8_t (*matrix)[784] = malloc(sizeof(uint8_t[784]) * item_count);
     
     for(i = 0; i < item_count; i++){
-        for(j = 0; j < 28; j++){
-            for(k = 0; k < 28; k++){
-                matrix[i][j][k] = bytes[pos];
-                pos++;
-            }
+        for(j = 0; j < 28*28; j++){
+            matrix[i][j] = bytes[pos];
+            pos++;
         }
     }
-    return &matrix[0][28][28];
+    return &matrix[0][0];
 }

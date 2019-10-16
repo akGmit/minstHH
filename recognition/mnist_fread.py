@@ -1,31 +1,51 @@
 #!/usr/bin/python3
-""" Read MNIST training and test files """
-import os
-import sys
-import matplotlib.pyplot as plt
+"""Here are function definitions to read MNIST files to memory.
+    These functions use ctypes module functionality and calls foreign C functions.
+    Using stdio C  library significantly increased efficiancy of reading and processing data files."""
 import numpy as np
-from recognition import cfunc
+from recognition import cfunc, fileLoc
 
-#Open bin data file for reading, using C stdio I/O library funcrion
-fptr = cfunc.fopen(cfunc.strToCh("../rough_work/train-images.idx3-ubyte"), cfunc.strToCh('rb'))
+"""Reading to MNIST train and test binnart image files.
+    Function takes file path as parameter, gets a pointer to file using C fopen() function.
+    Reads binary data file in one go to memory and then calls another custom C function to process raw data into 60000by28by28 array.
+    Returns 60000by784 array ready for feeding to NN."""
+def dig_images(filepath):
+  fptr = cfunc.fopen(cfunc.strToCh(filepath), cfunc.strToCh('rb'))
+  bin_digits = cfunc.img_data(fptr)
+  matrix = cfunc.process_bytes(bin_digits, int.from_bytes(bin_digits[0:4], byteorder='big'), int.from_bytes(bin_digits[4:8], byteorder='big'))
+  train_matrix = np.ctypeslib.as_array(matrix, shape=(int.from_bytes(bin_digits[4:8], byteorder='big'),) ).reshape( int.from_bytes(bin_digits[4:8], byteorder='big'), 784)
+  # train_matrix = np.ctypeslib.as_array(matrix, (int.from_bytes(bin_digits[4:8], byteorder='big'),784 ))
+  # reshape((int.from_bytes(bin_digits[4:8], byteorder='big'), 784))
+  # np.reshape(train_matrix, (int.from_bytes(bin_digits[4:8], byteorder='big'), ))
+  # train_img = np.array(matrix, 
+  cfunc.free(bin_digits)
+  cfunc.fclose(fptr)
+  return train_matrix
 
-#Load raw data to memory
-bin_digits = cfunc.img_data(fptr)
+"""Function to read label files.
+    Returns 1D array of image labels."""
+def labels(filepath):
+  fptr = cfunc.fopen(cfunc.strToCh(filepath), cfunc.strToCh('rb'))
+  bin_labels = cfunc.label_data(fptr)
+  cfunc.fclose(fptr)
+  return bin_labels
 
-fptr = cfunc.fopen(cfunc.strToCh("../rough_work/train-labels.idx1-ubyte"), cfunc.strToCh('rb'))
-bin_labels = cfunc.label_data(fptr)
-#Process binary file data and return array of each digi matrices
-#Store labels
-matrix = cfunc.process_bytes(bin_digits, int.from_bytes(bin_digits[0:4], byteorder='big'), int.from_bytes(bin_digits[4:8], byteorder='big'))
-labels_train = cfunc.label_data(fptr)
 
-#Free mem, close file
-cfunc.free(bin_digits)
-cfunc.fclose(fptr)
+# test_img = dig_images(fileLoc.fLoc[0])
+# train_img = dig_images(fileLoc.fLoc[2])
 
-#Plot image
-image = ~np.array(matrix[1]).reshape(28,28).astype(np.uint8)
-print(int.from_bytes(labels_train[10:11], byteorder='big'))
-for l in range(7,100): print(int.from_bytes(labels_train[l:l+1], byteorder='big'), end='-')
-plt.imshow(image, cmap='gray')
-plt.show()
+# test_lbl = labels(fileLoc.fLoc[1])
+# train_lbl = labels(fileLoc.fLoc[3])
+
+# print(test_img.shape)
+# print(test_img[0])
+# print(train_img[0])
+
+# print(test_lbl[8])
+# print(train_lbl[8])
+
+# with open(fileLoc.fLoc[2], 'rb') as f:
+#     test  = f.read()
+
+# t = ~np.array(list(test[16:])).reshape(60000, 784).astype(np.uint8)
+# print(t[0])
