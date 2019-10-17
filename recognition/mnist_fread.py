@@ -3,7 +3,7 @@
     These functions use ctypes module functionality and calls foreign C functions.
     Using stdio C  library significantly increased efficiancy of reading and processing data files."""
 import numpy as np
-from recognition import cfunc, fileLoc
+import cfunc
 
 """Reading to MNIST train and test binnart image files.
     Function takes file path as parameter, gets a pointer to file using C fopen() function.
@@ -13,7 +13,7 @@ def dig_images(filepath):
   fptr = cfunc.fopen(cfunc.strToCh(filepath), cfunc.strToCh('rb'))
   bin_digits = cfunc.img_data(fptr)
   matrix = cfunc.process_bytes(bin_digits, int.from_bytes(bin_digits[0:4], byteorder='big'), int.from_bytes(bin_digits[4:8], byteorder='big'))
-  train_matrix = np.ctypeslib.as_array(matrix, shape=(int.from_bytes(bin_digits[4:8], byteorder='big'),) ).reshape( int.from_bytes(bin_digits[4:8], byteorder='big'), 784)
+  train_matrix = ~np.ctypeslib.as_array(matrix, shape=(int.from_bytes(bin_digits[4:8], byteorder='big'),) ).reshape( int.from_bytes(bin_digits[4:8], byteorder='big'), 784) / 255
   # train_matrix = np.ctypeslib.as_array(matrix, (int.from_bytes(bin_digits[4:8], byteorder='big'),784 ))
   # reshape((int.from_bytes(bin_digits[4:8], byteorder='big'), 784))
   # np.reshape(train_matrix, (int.from_bytes(bin_digits[4:8], byteorder='big'), ))
@@ -27,15 +27,21 @@ def dig_images(filepath):
 def labels(filepath):
   fptr = cfunc.fopen(cfunc.strToCh(filepath), cfunc.strToCh('rb'))
   bin_labels = cfunc.label_data(fptr)
+  l = np.array(list(bin_labels[8:(int.from_bytes(bin_labels[4:8], byteorder='big')+8)])).astype(np.uint8)
   cfunc.fclose(fptr)
-  return bin_labels
+  return l
 
 
-# test_img = dig_images(fileLoc.fLoc[0])
+# test_img = dig_images('../rough_work/t10k-labels.idx1-ubyte')
 # train_img = dig_images(fileLoc.fLoc[2])
 
-# test_lbl = labels(fileLoc.fLoc[1])
-# train_lbl = labels(fileLoc.fLoc[3])
+# test_lbl = labels('../rough_work/t10k-images.idx3-ubyte')
+# train_lbl = labels('../rough_work/train-labels.idx1-ubyte')
+
+# print(len(test_img))
+# print(len(train_lbl))
+# print(len(train_img))
+# print(train_lbl[8])
 
 # print(test_img.shape)
 # print(test_img[0])

@@ -31,15 +31,25 @@ uint8_t* img_data(FILE *f){
 /*  Read training and testing labels file. */
 uint8_t * label_data(FILE *f){
     uint8_t * buffer;
-   
     fseek (f , 0 , SEEK_END);
     long fSize = ftell (f);
     rewind (f);
    
     buffer = (uint8_t*) malloc (sizeof(uint8_t)*fSize);
     fread (buffer,1,fSize,f);
+
+    uint32_t item_count = (buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7];
+    printf("Item count %d", item_count);
+    uint8_t * labels = malloc(sizeof(uint8_t)* item_count + 8);
    
-    return buffer;
+    int pos = 8;
+    for(int i = 0;i < item_count + 8;i++){
+        labels[i] = buffer[i];
+        pos++;
+    }
+
+    
+    return labels;
 }
 
 /* Process byte arrays of raw data and return array of 2d arrays for each image. */
