@@ -10,17 +10,14 @@ import mnist_fread as mread
 model = kr.models.Sequential()
 
 # Add a hidden layer with 1000 neurons and an input layer with 784.
-model.add(kr.layers.Dense(units=784, activation='linear', input_dim=784))
-model.add(kr.layers.Dense(units=2500, activation='relu'))
-model.add(kr.layers.Dense(units=2000, activation='relu'))
-model.add(kr.layers.Dense(units=1500, activation='relu'))
-model.add(kr.layers.Dense(units=1000, activation='relu'))
-model.add(kr.layers.Dense(units=500, activation='relu'))
+model.add(kr.layers.Dense(units=600, activation='linear', input_dim=784))
+model.add(kr.layers.Dense(units=400, activation='relu'))
+
 # Add a three neuron output layer.
 model.add(kr.layers.Dense(units=10, activation='softmax'))
 
 # Build the graph.
-model.compile(loss='categorical_crossentropy', optimizer=kr.optimizers.RMSprop(), metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=['accuracy'])
 
 train_img = mread.dig_images(fLoc[2])
 
@@ -37,7 +34,7 @@ print(train_lbs[0], outputs[0])
 for i in range(10):
     print(i, encoder.transform([i]))
 
-model.fit(inputs, outputs, epochs=6, batch_size=1000)
+model.fit(inputs, outputs, epochs=7, batch_size=100)
 
 test_img = mread.dig_images(fLoc[0])
 test_lbl = mread.labels(fLoc[1])

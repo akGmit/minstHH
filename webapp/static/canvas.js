@@ -88,17 +88,42 @@ function img_to_alpha_array(imgData, row_length) {
 /* Function called on Test button press.
  */
 function test() {
-
     var c = digit_boundries(img_to_alpha_array(ctx.getImageData(0, 0, width, height), 100));
-   
+
     var img = new Image();
     img.src = canvas.toDataURL("image/png");
 
     var ctx2 = document.getElementById("resized").getContext("2d");
-    
+
     img.addEventListener("load", function () {
         ctx2.drawImage(img, c.x1, c.y1, c.x2 - c.x1, c.y2 - c.y1, 0, 0, 20, 20);
-        var matrix = img_to_alpha_array(ctx2.getImageData(0, 0, 28, 28), 28);
+        var matrix = img_to_alpha_array(ctx2.getImageData(0, 0, 20, 20), 20);
+        
+        
         console.log(matrix);
+        p = document.getElementById("response");
+        var xhr = new XMLHttpRequest();
+        var url = "/predict";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onprogress = function(){
+            document.getElementById("response").innerHTML = "wait for the guess";
+        }
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById("response").innerHTML = xhr.responseText;
+            }
+        };
+        var data = JSON.stringify(matrix);
+        xhr.send(data);
+
+        console.log("SENT")
+
+        // $.post("http://127.0.0.1:5000/predict",
+        // JSON.stringify(matrix),
+        // function(data,status){
+        //     alert("Data: " + data + "\nStatus: " + status);
+        // });
+
     });
 } 
