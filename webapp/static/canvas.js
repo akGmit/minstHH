@@ -87,43 +87,66 @@ function img_to_alpha_array(imgData, row_length) {
 }
 /* Function called on Test button press.
  */
+
+function save(){
+    // var img = new Image();
+    // img.src = canvas.toDataURL("image/png");
+    // var ctx2 = document.getElementById("resized").getContext("2d");
+    // ctx2.drawImage(img, c.x1, c.y1, c.x2 - c.x1, c.y2 - c.y1, 0, 0, 20, 20);
+    var imgdata = ctx.getImageData(0,0,canvas.width, canvas.height);
+    var data = JSON.stringify(imgdata.data)
+    
+    //var image = canvas.toDataURL();
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', "/send");
+    xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+    xhr.send(data);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {        
+            console.log(xhr.response);
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.beginPath();
+            document.getElementsByTagName('html').item = xhr.response;
+            }
+    }
+} 
+
+
 function test() {
-    var c = digit_boundries(img_to_alpha_array(ctx.getImageData(0, 0, width, height), 100));
+    var c = digit_boundries(img_to_alpha_array(ctx.getImageData(0, 0, width, height), canvas.width));
 
     var img = new Image();
     img.src = canvas.toDataURL("image/png");
-
     var ctx2 = document.getElementById("resized").getContext("2d");
-
+    var matrix;
     img.addEventListener("load", function () {
         ctx2.drawImage(img, c.x1, c.y1, c.x2 - c.x1, c.y2 - c.y1, 0, 0, 20, 20);
-        var matrix = img_to_alpha_array(ctx2.getImageData(0, 0, 20, 20), 20);
-        
+        matrix = img_to_alpha_array(ctx2.getImageData(0, 0, 20, 20), 20);
         
         console.log(matrix);
-        p = document.getElementById("response");
         var xhr = new XMLHttpRequest();
-        var url = "/predict";
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onprogress = function(){
-            document.getElementById("response").innerHTML = "wait for the guess";
-        }
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById("response").innerHTML = xhr.responseText;
-            }
-        };
+        xhr.open("POST", "/");
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
         var data = JSON.stringify(matrix);
         xhr.send(data);
-
-        console.log("SENT")
-
-        // $.post("http://127.0.0.1:5000/predict",
-        // JSON.stringify(matrix),
-        // function(data,status){
-        //     alert("Data: " + data + "\nStatus: " + status);
-        // });
-
+        
+        // xhr.setRequestHeader("imagearray", "json");
+        // xhr.onprogress = function(){
+        //     document.getElementById("response").innerHTML = "wait for the guess";
+        // }
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {        
+            document.documentElement.innerHTML  = xhr.response;
+               ctx.clearRect(0,0,canvas.width, canvas.height);
+               ctx2.clearRect(0,0,28,28);
+               ctx.beginPath();
+               ctx2.beginPath();
+            }
+        };
+       
+        
+        
     });
+
+   
 } 

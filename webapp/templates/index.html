@@ -5,38 +5,38 @@
     <meta charset="utf-8">
     <title>{% block title %}Handwritten digit recognition{% endblock %}</title>
     <style>
-        #container {
-            position: relative;
-        }
-
-        #digit {
-            border: 1px solid #000;
-        }
-
-        #resized {
-            border: 1px solid #000;
+     #digit, #digit2{
+         border: 1px solid black;
         }
     </style>
 </head>
+<body id="mainBody">
+        {% block body %}
+  <table id="table">
+      <tr id="row1" >
+          <td class="td" width="50%" align="right">        
+              <canvas id="digit" height="250" width="250"></canvas>
+              <canvas id="resized" width="28" height="28" hidden="true"></canvas>
+            </td>
+        
+            
+            <td  class="td" width="50">
+                    <p id="predict" style="font-size:120px;">{{answer}} </p>
+            </td>
+            <td class="td"></td>
+    </tr>
 
-<body>
-  
-    <div id="container">{% block content %}
-        <canvas id="digit" width="100" height="100"></canvas>
-        <canvas id="resized" width="28" height="28"></canvas>
-        <button  id="button" onclick="test()" >Test</button>
-         
-         <button type="submit" onclick="test()"  >Click me</button>
-  
-        <p id="response"></p>
-        {% endblock %}
-    </div>
- 
-    <div>
-        {% block image %}
-        <img id="dig"></img>
-        {% endblock %}
-    </div>
+<tr>
+    <td width="50%" align="center" colspan="2">
+        
+        <button  id="button" type="submit"  onclick="save()">Test</button>
+    
+</td>
+
+</tr>
+
+  </table>
+{% endblock %}
     <script src="../static/canvas.js"></script>
 </body>
 </html>

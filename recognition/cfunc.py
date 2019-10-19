@@ -2,7 +2,7 @@
     C functions wrapped for usage.'''
 import ctypes
 
-libc = ctypes.CDLL('clibs/mnistread.so')
+libc = ctypes.CDLL('../recognition/clibs/mnistread.so')
 
 def strToCh(s):
     return ctypes.create_string_buffer(str.encode(s))

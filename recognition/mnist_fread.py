@@ -3,7 +3,7 @@
     These functions use ctypes module functionality and calls foreign C functions.
     Using stdio C  library significantly increased efficiancy of reading and processing data files."""
 import numpy as np
-import cfunc
+import cfunc as cfunc
 
 """Reading to MNIST train and test binnart image files.
     Function takes file path as parameter, gets a pointer to file using C fopen() function.
