@@ -5,11 +5,18 @@
 import numpy as np
 import cfunc as cfunc
 
-"""Reading to MNIST train and test binnart image files.
-    Function takes file path as parameter, gets a pointer to file using C fopen() function.
-    Reads binary data file in one go to memory and then calls another custom C function to process raw data into 60000by28by28 array.
-    Returns 60000by784 array ready for feeding to NN."""
 def dig_images(filepath):
+  """Reading to MNIST train and test binnart image files.
+  Function takes file path as parameter, gets a pointer to file using C fopen() function.
+  Reads binary data file in one go to memory and then calls another custom C function to process raw data into 60000by28by28 array.
+  Returns 60000by784 array ready for feeding to NN.
+
+  Params:
+    filepath: a path to a image file
+
+  Returns:
+    img matrix: an array of 2d image matrixes
+  """
   fptr = cfunc.fopen(cfunc.strToCh(filepath), cfunc.strToCh('rb'))
   bin_digits = cfunc.img_data(fptr)
   matrix = cfunc.process_bytes(bin_digits, int.from_bytes(bin_digits[0:4], byteorder='big'), int.from_bytes(bin_digits[4:8], byteorder='big'))
@@ -18,9 +25,10 @@ def dig_images(filepath):
   cfunc.fclose(fptr)
   return train_matrix
 
-"""Function to read label files.
-    Returns 1D array of image labels."""
 def labels(filepath):
+  """Function to read label files. 
+    Returns 1D array of image labels.
+  """
   fptr = cfunc.fopen(cfunc.strToCh(filepath), cfunc.strToCh('rb'))
   bin_labels = cfunc.label_data(fptr)
   l = np.array(list(bin_labels[8:(int.from_bytes(bin_labels[4:8], byteorder='big')+8)])).astype(np.uint8)

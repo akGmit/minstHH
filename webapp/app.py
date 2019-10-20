@@ -19,6 +19,7 @@ def predict():
   r = request.json
   r  = np.array(r).reshape(250,250).astype(np.uint8)
   r = cv2.resize(r, dsize=(28,28),dst=r,interpolation=cv2.INTER_CUBIC )
+  # plot.imsave('test.png', ~r, cmap='gray')
   num =  nn.get_prediction(r)
   print(num)  
   answer= str(num)

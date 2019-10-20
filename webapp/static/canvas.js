@@ -36,7 +36,7 @@ canvas.onmouseout = function (e) {
 };
 // draw line from previous point to current
 function draw() {
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 10;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.lineTo(curX, curY);
@@ -68,19 +68,13 @@ function img_to_alpha_array(imgData, row_length) {
 }
 /* Function called on Test button press.
  */
-
 function save(){
-    // var img = new Image();
-    // img.src = canvas.toDataURL("image/png");
-    // var ctx2 = document.getElementById("resized").getContext("2d");
-    // ctx2.drawImage(img, c.x1, c.y1, c.x2 - c.x1, c.y2 - c.y1, 0, 0, 20, 20);
+  
     var imgdata = ctx.getImageData(0,0,canvas.width, canvas.height);
     var imgalpha = img_to_alpha_array(imgdata.data, canvas.width)
     var data = JSON.stringify(imgalpha)
-    
-    //var image = canvas.toDataURL();
+
     var xhr = new XMLHttpRequest();
-   ;
     xhr.open('POST', "/send");
     xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xhr.send(data);
