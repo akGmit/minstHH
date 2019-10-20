@@ -43,33 +43,14 @@ function draw() {
     ctx.stroke();
 }
 
-/* Find rectangular boundries of a digit */
-function digit_boundries(imgArr) {
-    var x1 = width;
-    var y1 = height;
-    var x2 = 0;
-    var y2 = 0;
-    for (var i = 0; i < imgArr.length; i++) {
-        for (var j = 0; j < imgArr.length; j++) {
-            if (imgArr[i][j] > 0) {
-                if (i < y1) y1 = i;
-                if (j < x1) x1 = j;
-            }
-            if (imgArr[width - 1 - i][height - 1 - j] > 0) {
-                if (width - 1 - i > y2) y2 = width - 1 - i;
-                if (height - 1 - j > x2) x2 = height - 1 - j;
-            }
-        }
-    }
-    return { "x1": x1, "x2": x2, "y1": y1, "y2": y2 };
-}
+
 /* Convert image data array to alpha channel matrix */
 function img_to_alpha_array(imgData, row_length) {
     var alpha = [];
     var i = 0;
 
-    for (i = 3; i < imgData.data.length; i = 4 + i) {
-        alpha.push(imgData.data[i]);
+    for (i = 3; i < imgData.length; i = 4 + i) {
+        alpha.push(imgData[i]);
     }
     var d = [];
     var r = [];
@@ -94,59 +75,23 @@ function save(){
     // var ctx2 = document.getElementById("resized").getContext("2d");
     // ctx2.drawImage(img, c.x1, c.y1, c.x2 - c.x1, c.y2 - c.y1, 0, 0, 20, 20);
     var imgdata = ctx.getImageData(0,0,canvas.width, canvas.height);
-    var data = JSON.stringify(imgdata.data)
+    var imgalpha = img_to_alpha_array(imgdata.data, canvas.width)
+    var data = JSON.stringify(imgalpha)
     
     //var image = canvas.toDataURL();
     var xhr = new XMLHttpRequest();
+   ;
     xhr.open('POST', "/send");
     xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     xhr.send(data);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {        
-            console.log(xhr.response);
+           
             ctx.clearRect(0,0,canvas.width, canvas.height);
             ctx.beginPath();
-            document.getElementsByTagName('html').item = xhr.response;
-            }
+            console.log(xhr.response);  
+            document.getElementById('predict').innerHTML = xhr.response;
+        }
     }
-} 
-
-
-function test() {
-    var c = digit_boundries(img_to_alpha_array(ctx.getImageData(0, 0, width, height), canvas.width));
-
-    var img = new Image();
-    img.src = canvas.toDataURL("image/png");
-    var ctx2 = document.getElementById("resized").getContext("2d");
-    var matrix;
-    img.addEventListener("load", function () {
-        ctx2.drawImage(img, c.x1, c.y1, c.x2 - c.x1, c.y2 - c.y1, 0, 0, 20, 20);
-        matrix = img_to_alpha_array(ctx2.getImageData(0, 0, 20, 20), 20);
-        
-        console.log(matrix);
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/");
-        xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-        var data = JSON.stringify(matrix);
-        xhr.send(data);
-        
-        // xhr.setRequestHeader("imagearray", "json");
-        // xhr.onprogress = function(){
-        //     document.getElementById("response").innerHTML = "wait for the guess";
-        // }
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {        
-            document.documentElement.innerHTML  = xhr.response;
-               ctx.clearRect(0,0,canvas.width, canvas.height);
-               ctx2.clearRect(0,0,28,28);
-               ctx.beginPath();
-               ctx2.beginPath();
-            }
-        };
-       
-        
-        
-    });
-
    
 } 
