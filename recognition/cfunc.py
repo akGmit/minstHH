@@ -1,54 +1,121 @@
-import ctypes
-""" Ctypes function module.
-    C functions wrapped for usage."""
-
+"""Ctypes function module.
+    
+C functions wrapped for usage.
+"""
+import ctypes  as ctype
+from ctypes import *
+# import clibs
+libc = None
 # Get reference to C library
-libc = ctypes.CDLL('../recognition/clibs/mnistread.so')
+def loadLibc():
+  libc = ctype.CDLL('clibs/mnistread.so')
+
 
 def strToCh(s):
-  """ Helper function to convert string to char *, for C native functions
+  """Convert python string to char array, for C native functions.
+  
+  Parameters:
+    string: python string to be converted.
+  
+  Returns:
+    char[]: array of characters for C  functions.
+
   """
-  return ctypes.create_string_buffer(str.encode(s))
+  return ctype.create_string_buffer(str.encode(s))
 
 
-def fopen(filename, mode):
-  """ Get a C FILE pointer to a file.
+def fopen(filepath, mode):
+  """Get a C FILE type pointer to a file.
+
+  Parameters:
+    filepath: path to the file.
+  
+  Returns:
+    FILE*: C pointer to the file.
+
   """
-  fopen = wrap_function(libc, 'fopen', ctypes.c_void_p, [
-                        ctypes.c_char_p, ctypes.c_char_p])
-  return fopen(filename, mode)
+  fopen = wrap_function(libc, 'fopen', ctype.c_void_p, [
+                        ctype.c_char_p, ctype.c_char_p])
+  return fopen(filepath, mode)
 
 
 def fclose(file_pointer):
-  f = wrap_function(libc, 'fclose', ctypes.c_int, [ctypes.c_void_p])
+  """Close C file.
+
+  Parameters:
+    file pointer: pointer with FILE address.
+  
+  Returns:
+    int: value indicating if closing was succesfull.
+
+  """
+  f = wrap_function(libc, 'fclose', ctype.c_int, [ctype.c_void_p])
   return f(file_pointer)
 
 
 def free(address):
-  f = wrap_function(libc, 'free', ctypes.c_void_p, None)
+  """Free memory address.
+
+  C function to empty memory address.
+
+  Parameters:
+    pointer: pointer to the address.
+
+  """
+  f = wrap_function(libc, 'free', ctype.c_void_p, None)
   return f(address)
 
 
 def img_data(file_pointer):
-  f = wrap_function(libc, 'img_data',  ctypes.POINTER(
-      ctypes.c_uint8), [ctypes.c_void_p])
+  """C library function to read image data from file.
+
+  Function implemented in C to efficiently read MNIST image data format file.
+
+  Parameters:
+    file pointer: C pinter to the file.
+  
+  Returns:
+    binary file contents.
+
+  """
+  f = wrap_function(libc, 'img_data',  ctype.POINTER(
+      ctype.c_uint8), [ctype.c_void_p])
   return f(file_pointer)
 
 
 def label_data(file_pointer):
-  f = wrap_function(libc, 'label_data',  ctypes.POINTER(
-      ctypes.c_uint8), [ctypes.c_void_p])
+  """C function to read MNIST fortmat label file.
+
+  Efficiently reads file using C native functions.
+
+  Parameters:
+    file pointer: C pinter to the file.
+  
+  Returns:
+    binary file contents.
+
+  """
+  f = wrap_function(libc, 'label_data',  ctype.POINTER(
+      ctype.c_uint8), [ctype.c_void_p])
   return f(file_pointer)
 
 
 def process_bytes(uint_bytes_arr, magic_num, item_count):
-  f = wrap_function(libc, 'process_bytes', ctypes.POINTER(
-      (ctypes.c_uint8 * 28) * 28), [ctypes.POINTER(ctypes.c_ubyte), ctypes.c_long, ctypes.c_int])
+  """C function to process bytes data file.
+
+  Takas raw MNIST binary file contents and processes them to 2d matrix for each image.
+
+  Returns:
+    array of 2D arrays for each image.
+
+  """
+  f = wrap_function(libc, 'process_bytes', ctype.POINTER(
+      (ctype.c_uint8 * 28) * 28), [ctype.POINTER(ctype.c_ubyte), ctype.c_long, ctype.c_int])
   return f(uint_bytes_arr, magic_num, item_count)
 
-""" wrap function to define ctypes functions """
+
 def wrap_function(lib, funcname, restype, argtypes):
-  """Simplify wrapping ctypes functions"""
+  """C function wrpper to create pointers to C functions."""
   func = lib.__getattr__(funcname)
   func.restype = restype
   func.argtypes = argtypes

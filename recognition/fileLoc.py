@@ -1,5 +1,6 @@
-""" Just a dict  with MNIST file locations """
-loc = {'test_img': '../rough_work/t10k-images.idx3-ubyte',
-  'test_lbl': '../rough_work/t10k-labels.idx1-ubyte',
-    'train_img': '../rough_work/train-images.idx3-ubyte',
-      'train_lbl': '../rough_work/train-labels.idx1-ubyte' }
+"""Dictionary  with MNIST file locations."""
+
+loc = {'test_img': '../mnist/t10k-images.idx3-ubyte',
+  'test_lbl': '../mnist/t10k-labels.idx1-ubyte',
+    'train_img': '../mnist/train-images.idx3-ubyte',
+      'train_lbl': '../mnist/train-labels.idx1-ubyte' }

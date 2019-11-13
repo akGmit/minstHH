@@ -1,8 +1,7 @@
 #ignore mnist files
-rough_work/*ubyte
-rough_work/readFiles
+mnist
 ipynb_checkpoints
-*.h5
+
 
 
 ## GENERATED ##
@@ -34,8 +33,8 @@ ipynb_checkpoints
 
 # Shared objects (inc. Windows DLLs)
 *.dll
-*.so
-*.so.*
+
+
 *.dylib
 
 # Executables
