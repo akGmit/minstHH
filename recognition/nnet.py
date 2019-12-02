@@ -10,6 +10,7 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 import recognition.fileLoc as loc
 import recognition.mnist_fread as mread
+import matplotlib.pyplot as plt
 
 batch_size = 128
 num_classes = 10
@@ -111,6 +112,8 @@ def get_prediction(img):
     prediction: a most probable number.
     
   """
-  model = kr.models.load_model('recognition/cnn99.h5', None, True)
+  model = kr.models.load_model('recognition/cnn99.h5')
+  plt.imshow(img, cmap='gray')
+  plt.show()
   img = ~np.asarray(img).reshape((1,28,28,1)).astype(np.uint8) / 255.0
-  return np.argmax(model.predict(img))
+  return model.predict_classes(img)[0]

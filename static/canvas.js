@@ -4,7 +4,10 @@ var canvas = document.getElementById("digit");
 var ctx = canvas.getContext("2d");
 var width = canvas.width, height = canvas.height;
 var hold = false;
-
+// ctx.lineJoin = 'miter';
+// ctx.lineWidth = 15;
+// ctx.strokeStyle = '#FFFFFF';
+// ctx.strokeRect(0, 0, 200, 200);
 // CANVAS EVENTS
 // get mouse coordinates relative to canvas
 // move to the point 
@@ -36,8 +39,8 @@ canvas.onmouseout = function (e) {
 };
 // draw line from previous point to current
 function draw() {
-    ctx.lineWidth = 10;
-    ctx.lineCap = "round";
+    ctx.lineWidth = 8;
+    ctx.lineCap = "butt";
     ctx.lineJoin = "round";
     ctx.lineTo(curX, curY);
     ctx.stroke();

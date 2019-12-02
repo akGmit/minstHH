@@ -13,4 +13,4 @@ def center_of_mass(pixels):
   bottm = np.zeros((4, 28))
   centered = np.concatenate((centered, bottm), axis=0)
   
-  return list(centered)
+  return centered
