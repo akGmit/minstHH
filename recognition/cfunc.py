@@ -5,11 +5,11 @@ C functions wrapped for usage.
 import ctypes  as ctype
 from ctypes import *
 # import clibs
-libc = None
+#libc = None
 # Get reference to C library
 def loadLibc():
   libc = ctype.CDLL('clibs/mnistread.so')
-
+  return libc
 
 def strToCh(s):
   """Convert python string to char array, for C native functions.
@@ -34,8 +34,10 @@ def fopen(filepath, mode):
     FILE*: C pointer to the file.
 
   """
-  fopen = wrap_function(libc, 'fopen', ctype.c_void_p, [
+  fopen = wrap_function(loadLibc(), 'fopen', ctype.c_void_p, [
                         ctype.c_char_p, ctype.c_char_p])
+  # fopen = wrap_function(libc, 'fopen', ctype.c_void_p, [
+  #                       ctype.c_char_p, ctype.c_char_p])
   return fopen(filepath, mode)
 
 
@@ -49,7 +51,7 @@ def fclose(file_pointer):
     int: value indicating if closing was succesfull.
 
   """
-  f = wrap_function(libc, 'fclose', ctype.c_int, [ctype.c_void_p])
+  f = wrap_function(loadLibc(), 'fclose', ctype.c_int, [ctype.c_void_p])
   return f(file_pointer)
 
 
@@ -62,7 +64,7 @@ def free(address):
     pointer: pointer to the address.
 
   """
-  f = wrap_function(libc, 'free', ctype.c_void_p, None)
+  f = wrap_function(loadLibc(), 'free', ctype.c_void_p, None)
   return f(address)
 
 
@@ -78,7 +80,7 @@ def img_data(file_pointer):
     binary file contents.
 
   """
-  f = wrap_function(libc, 'img_data',  ctype.POINTER(
+  f = wrap_function(loadLibc(), 'img_data',  ctype.POINTER(
       ctype.c_uint8), [ctype.c_void_p])
   return f(file_pointer)
 
@@ -95,7 +97,7 @@ def label_data(file_pointer):
     binary file contents.
 
   """
-  f = wrap_function(libc, 'label_data',  ctype.POINTER(
+  f = wrap_function(loadLibc(), 'label_data',  ctype.POINTER(
       ctype.c_uint8), [ctype.c_void_p])
   return f(file_pointer)
 
@@ -109,7 +111,7 @@ def process_bytes(uint_bytes_arr, magic_num, item_count):
     array of 2D arrays for each image.
 
   """
-  f = wrap_function(libc, 'process_bytes', ctype.POINTER(
+  f = wrap_function(loadLibc(), 'process_bytes', ctype.POINTER(
       (ctype.c_uint8 * 28) * 28), [ctype.POINTER(ctype.c_ubyte), ctype.c_long, ctype.c_int])
   return f(uint_bytes_arr, magic_num, item_count)
 

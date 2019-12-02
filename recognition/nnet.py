@@ -1,28 +1,47 @@
-"""Module defining basic interface for recogintion functionality using Keras NN.
+"""Module defining basic interface for recognition functionality using Keras NN.
       
 Web application uses this module for its purpose.
 """
+from __future__ import print_function
 import keras as kr
 import numpy as np
-import sklearn.preprocessing as pre
-import recognition.fileLoc as floc
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+import recognition.fileLoc as loc
 import recognition.mnist_fread as mread
 
-def get_default_model():
-  """Compile basic Keras model.
+batch_size = 128
+num_classes = 10
+epochs = 6
+img_rows, img_cols = 28, 28
+input_shape = (img_rows, img_cols, 1)
 
-  Default structure of model is 3 layers with 1000 hidden units.
+def get_default_model():
+  """Compile default Keras model.
+
+  Convolutional Keras model adopted from https://keras.io/examples/mnist_cnn/
+  
   Returns:
     keras model: compiled default keras model.
 
   """
-  model = kr.models.Sequential()
-  model.add(kr.layers.Dense(units=600, activation='linear', input_dim=784))
-  model.add(kr.layers.Dense(units=400, activation='relu'))
-  model.add(kr.layers.Dense(units=10, activation='softmax'))
-  model.compile(loss=kr.losses.categorical_crossentropy, optimizer='adam',metrics=['accuracy'])
-  return model
+  model = Sequential()
+  model.add(Conv2D(32, kernel_size=(3, 3),
+                  activation='relu',
+                  input_shape=input_shape))
+  model.add(Conv2D(64, (3, 3), activation='relu'))
+  model.add(MaxPooling2D(pool_size=(2, 2)))
+  model.add(Dropout(0.25))
+  model.add(Flatten())
+  model.add(Dense(128, activation='relu'))
+  model.add(Dropout(0.5))
+  model.add(Dense(num_classes, activation='softmax'))
 
+  model.compile(loss=kr.losses.categorical_crossentropy,
+                optimizer=kr.optimizers.Adadelta(),
+                metrics=['accuracy'])
+  return model
 
 def load_train_data(img, lbl):
   """Load training images and labels.
@@ -35,10 +54,9 @@ def load_train_data(img, lbl):
   """
   train_img = mread.dig_images(img)
   train_lbl = mread.labels(lbl)
-  train_lbl = transform_labels(train_lbl)
+  train_lbl =  kr.utils.to_categorical(train_lbl, num_classes)
   return train_img, train_lbl
   
-
 def load_test_data( img, lbl):
   """Load test images and labels.
   
@@ -50,18 +68,38 @@ def load_test_data( img, lbl):
   """
   test_img = mread.dig_images(img)
   test_lbl = mread.labels(lbl)
-  test_lbl = transform_labels(test_lbl)
+  test_lbl = kr.utils.to_categorical(test_lbl, num_classes)
   return test_img, test_lbl
   
+def train_model(model = get_default_model()):
+  """Train default or provided as function parameter model.
 
-def transform_labels( lbls):
-  """Transform label data to a binary format needed for multi-class NN."""
-  encoder = pre.LabelBinarizer()
-  encoder.fit(lbls)
-  return encoder.transform(lbls)
+  Function takes compiled keras model as parameter(or loads default). 
+  Loads MNIST training/testing data and trains model.
+  Returns trained model.
 
+  Params:
+    model: a compiled Keras model(or default if none provided)
 
-def get_prediction( img):
+  Returns:
+    model: model trained against MNIST collection
+
+  """ 
+  train_img, train_lbl = load_train_data(loc['train_img'], loc['train_lbl'])
+  test_img, test_lbl = load_test_data(loc['test_img'], loc['test_lbl'])
+  
+  model.fit(train_img, train_lbl,
+          batch_size=batch_size,
+          epochs=epochs,
+          verbose=1,
+          validation_data=(test_img, test_lbl))
+  score = model.evaluate(test_img, test_lbl, verbose=0)
+
+  print('Test loss:', score[0])
+  print('Test accuracy:', score[1])
+  return model
+
+def get_prediction(img):
   """Get predicted value of provided image.
   
   Loading pre-trained keras model to feed provided image and get result.
@@ -73,6 +111,6 @@ def get_prediction( img):
     prediction: a most probable number.
     
   """
-  model = kr.models.load_model('recognition/acc99.h5', None, True)
-  img = ~np.asarray(img).reshape((1,784)).astype(np.uint8) / 255.0
+  model = kr.models.load_model('recognition/cnn99.h5', None, True)
+  img = ~np.asarray(img).reshape((1,28,28,1)).astype(np.uint8) / 255.0
   return np.argmax(model.predict(img))
