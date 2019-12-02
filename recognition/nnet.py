@@ -44,6 +44,10 @@ def get_default_model():
                 metrics=['accuracy'])
   return model
 
+def get_model(location = 'recognition/cnn99.h5'):
+  model = kr.models.load_model(location)
+  return model
+
 def load_train_data(img, lbl):
   """Load training images and labels.
   
@@ -99,21 +103,3 @@ def train_model(model = get_default_model()):
   print('Test loss:', score[0])
   print('Test accuracy:', score[1])
   return model
-
-def get_prediction(img):
-  """Get predicted value of provided image.
-  
-  Loading pre-trained keras model to feed provided image and get result.
-  Input image array is converted to suitable structure and fed to NN.
-  
-  Params:
-    img: a 28x28 image array.
-  Returns:
-    prediction: a most probable number.
-    
-  """
-  model = kr.models.load_model('recognition/cnn99.h5')
-  plt.imshow(img, cmap='gray')
-  plt.show()
-  img = ~np.asarray(img).reshape((1,28,28,1)).astype(np.uint8) / 255.0
-  return model.predict_classes(img)[0]
