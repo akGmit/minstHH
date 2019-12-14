@@ -6,6 +6,7 @@ Using stdio C  library significantly increased efficiancy of reading and process
 """
 import numpy as np
 import recognition.cfunc as cfunc
+
 def dig_images(filepath):
   """Read  MNIST format train and test binary image files.
 

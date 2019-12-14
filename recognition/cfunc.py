@@ -4,12 +4,19 @@ C functions wrapped for usage.
 """
 import ctypes  as ctype
 from ctypes import *
-# import clibs
-#libc = None
-# Get reference to C library
+import os
+import platform
+
+plt = platform.system()
+
 def loadLibc():
-  libc = ctype.CDLL('clibs/mnistread.so')
+  libc = None
+  if(plt == "Windows"):
+    libc = ctype.WinDLL('recognition/clibs/read_mnist.so')
+  else:
+    libc = ctype.CDLL('recognition/clibs/read_mnist.so')
   return libc
+  
 
 def strToCh(s):
   """Convert python string to char array, for C native functions.

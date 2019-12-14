@@ -45,5 +45,7 @@ def process_image(img):
 if __name__ == "__main__":
   server = simple_server.WSGIServer(('127.0.0.1', 8000), simple_server.WSGIRequestHandler)
   server.set_app(app)
+  
   print("Listening on:  http://" +  server.server_address[0] + ':' +  str(server.server_address[1]))
+  
   server.serve_forever()

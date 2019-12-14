@@ -44,7 +44,7 @@ def get_default_model():
                 metrics=['accuracy'])
   return model
 
-def get_model(location = 'recognition/cnn99.h5'):
+def get_model(location = 'recognition/cnn_99.h5'):
   model = kr.models.load_model(location)
   return model
 
