@@ -13,7 +13,27 @@ App prediction process:
   7. Image arrays is fed to Keras CNN model for prediction.
   8. Prediction result is returned to web browser.
   
-To run application simply type "python3 app.py", this will start web service.
+
+<h3>Running</h3>
+
+Required packages for running an application are listed in "requirements.txt".
+
+To get packages run:
+  "pip install --no-cache-dir -r requirements.txt"
+
+To run app:
+  "python app.py"
+
+OR
+
+Build a docker image:
+  "docker build -t mnist ." (run from main project directory)
+Launch docker image:
+  "docker run -d -p 5000:5000 mnist"
+  
+Whichever way you ran the application, address is:
+  <b>localhost:5000</b>
+  
   
 <h2>Application structure</h2>
 
@@ -30,7 +50,7 @@ To increase performance of reading MNIST files and processing them to required f
 
 Function implementations to read MNIST files to memmory. Contains two functions: reading MNIST image data and MNIST labels data. Data is read using functions defined in Cfunc and returned pointers from C foreing functions are further processed to match format required for training/testing model.
 
-<b>C library</h>
+<b>C library</b>
 
 This library provides implementations of C functions to read MNIST imgae, label data. Also it processes a raw bytes to more practical 2D arrays. From this library a shared object is compiled which can be used by Python scripts.
 
